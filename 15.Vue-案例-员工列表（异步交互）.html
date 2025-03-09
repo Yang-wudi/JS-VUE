@@ -258,18 +258,37 @@
             },
             //方法
             methods:{
-                search(){
-                    // 发送axios请求，获取员工列表数据
-                    axios.get(`https://web-server.itheima.net/emps/list?name=${this.searchForm.name}&gender=${this.searchForm.gender}&job=${this.searchForm.job}`).then((result) => {
-                        this.empList = result.data.data;
+                // search(){
+                //     // 发送axios请求，获取员工列表数据
+                //     axios.get(`https://web-server.itheima.net/emps/list?name=${this.searchForm.name}&gender=${this.searchForm.gender}&job=${this.searchForm.job}`).then((result) => {
+                //         this.empList = result.data.data;
                         
-                    });
+                //     });
+                  
+                // },
+                // 可以通过async await语法，将axios请求改为同步请求。async用来声明一个异步方法，await用来等待异步方法执行完成。
+                //注意：await只能出现在async方法中，不能单独使用。
+                async search(){
+                    let result = await axios.get(`https://web-server.itheima.net/emps/list?name=${this.searchForm.name}&gender=${this.searchForm.gender}&job=${this.searchForm.job}`);
+                    this.empList = result.data.data;
+                    
                 },
+
                 clear(){
                     //清空表单项数据
                     this.searchForm = {name:'',gender:'',job:''};
+                    this.search();
                 }
             },
+            //钩子函数
+            mounted(){
+                //页面加载完成之后，发送axios请求，获取员工列表数据
+                // axios.get('https://web-server.itheima.net/emps/list').then((result) => {
+                //     this.empList = result.data.data;
+                    
+                // });
+                this.search();
+            }
         }).mount('#container');
     </script>
 
