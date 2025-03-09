@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS-常见事件</title>
+</head>
+<body>
+    <form action="" style="text-align: center;">
+        姓名：<input type="text" name="username" id="username">
+        年龄：<input type="number" name="age" id="age">
+        <input type="submit" value="提交" id="btn1"></input>
+        <input type="button" value="单击事件" id="btn2"></input>
+    </form>
+
+
+    <br><br><br>
+
+
+    <table width="500px" border="1px" align="center" cellspacing="0px" >     <!--cellspacing 表格边框间距 -->
+        <thead>
+            <tr>
+                <th>学号</th>
+                <th>姓名</th>
+                <th>分数</th>
+                <th>评语</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr align="center">
+                <td>001</td>
+                <td>张三</td>
+                <td>90</td>
+                <td>优秀</td>
+            </tr>
+            <tr align="center" id="last">
+                <td>002</td>
+                <td>李四</td>
+                <td>80</td>
+                <td>良好</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <script>
+        // 常见事件：
+        // 1.鼠标事件   2.键盘事件  3.焦点事件  4.表单事件
+
+        //click:鼠标点击事件
+        document.querySelector('#btn2').addEventListener('click',() => {
+            console.log("我被点击了...");
+        })
+
+        //mouseenter:鼠标进入事件
+        document.querySelector('#last').addEventListener('mouseenter',() => {
+            console.log('鼠标进入...');
+        })
+
+        //mouseleave:鼠标离开事件
+        document.querySelector('#last').addEventListener('mouseleave',() => {
+            console.log('鼠标离开...');
+        })
+
+        //keydown:键盘按下事件
+        document.querySelector('#username').addEventListener('keydown',() => {
+            console.log('键盘按下...');
+        })
+
+        //keyup:键盘抬起事件
+        document.querySelector('#username').addEventListener('keyup',() => {
+            console.log('键盘抬起...');
+        })
+
+        // document.querySelector('#username').addEventListener('keydown', (event) => {
+        //     console.log(`键盘按下: ${event.key}`);
+        //     });
+
+        // document.querySelector('#username').addEventListener('keyup', (event) => {
+        //     console.log(`键盘抬起: ${event.key}`);
+        //     });
+
+        // focus:元素获得焦点事件
+        document.querySelector('#age').addEventListener('focus',() => {
+            console.log('获得焦点...');
+        })
+
+        //blur:元素失去焦点事件
+        document.querySelector('#age').addEventListener('blur',() => {
+            console.log('失去焦点...');
+        })
+
+        //input:用户输入时触发
+        document.querySelector('#age').addEventListener('input',() => {
+            console.log('用户输入...');
+        })
+
+        //submit:提交表单事件
+        document.querySelector('form').addEventListener('submit',() => {
+            alert('提交表单...');
+        })
+    </script>
+   
+</body>
+</html>
