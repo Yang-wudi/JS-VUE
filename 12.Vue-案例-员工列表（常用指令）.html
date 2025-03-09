@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JS-案例-员工列表</title>
+    <style>
+        /* 导航栏样式 */
+        .navbar {
+            background-color: #beb9b9; /* 灰色背景 */
+            display: flex;
+            justify-content: space-between;  /* 左右对齐 */
+            padding: 10px;   /* 内边距 */
+            align-items: center;     /* 垂直居中 */
+        }
+
+        /* 标题样式 */
+        .navbar h1 {
+            margin: 0;
+            font-weight: bold; /* 加粗字体 */
+            color: white; /* 白色文字 */
+            /* 设置字体为楷体 */
+            font-family: "楷体";
+        }
+
+        /* 退出登录链接样式 */
+        .navbar a {
+            text-decoration: none; /* 移除下划线 */
+            color: white; /* 白色文字 */
+        }
+
+        /* 当鼠标悬停在链接上时改变颜色 */
+        .navbar a:hover {
+            background-color: #696969; /* 深灰色背景 */
+            color: black; /* 黑色文字 */
+        }
+
+        /* 搜索表单区域 */
+        .search-form{
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 10px;  /* 插件之间的间隔 */
+            margin: 20px 0; 
+        }
+        .search-form  input[type="text"],.search-form select{
+            padding: 5px;   /* 输入框内边距 */
+            width: 260px;
+        }
+        .search-form  button{
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: none; /* 无边框 */
+            border-radius: 4px; /*  圆角 */
+            cursor: pointer;   /*  鼠标悬停 */
+        }
+        .search-form  button.search{
+            background-color: #5cb85c;
+            color: white;
+        }
+        .search-form  button.clear{
+            background-color: #d9534f;
+            color: white;
+        }
+
+
+         /* 表格整体样式 */
+         table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;   /* 上边距 */
+        }
+
+        /* 表头和单元格样式 */
+        th, td {
+            border: 1px solid #ddd; /* 边框 */
+            padding: 8px;   /* 内边距 */
+            text-align: center;   /* 水平居中 */
+            
+        }
+
+        th {
+            background-color: #f4f4f4;  /* 灰色背景 */
+            font-weight: bold;  /* 设置表头字体加粗 */
+        }
+
+        /* tr:nth-child(even) {   
+            background-color: #f9f9f9;
+        }   偶数行变色 */
+
+
+        .avatar {   /* 头像样式 */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%; /* 圆形头像 */
+        }
+       
+      
+        /* 操作按钮样式 */
+        .action-buttons button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: none; /* 无边框 */
+            border-radius: 4px; /*  圆角 */
+            cursor: pointer;   /*  鼠标悬停 */
+        }
+
+        .action-buttons button.edit {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .action-buttons button.delete {
+            background-color: #d9534f;
+            color: white;
+        }
+
+
+
+        /* 鼠标悬停行变色 */
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+
+
+        /* 底部版权区域 */
+        .footer {
+            background-color: #beb9b9;
+            color: white;
+            padding: 10px;      /* 内边距 */
+            text-align: center; /* 水平居中 */
+            margin-top: 20px;
+            font-size: 14px;
+            
+        }
+        #container {
+            width: 80%;     /* 宽度80% */
+            margin: 0 auto; /* 水平居中 */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <h1>Tlias智能学习辅助系统</h1>
+            <a href="#exit">退出登录</a>
+        </div>
+        <!-- 搜索表单区域 -->
+        <!-- 1.v-model指令
+                作用：表单元素上进行双向数据绑定，用于获取或设置表单项数据
+                注意：v-model ="变量"，变量必须在data中声明
+            2.v-on指令
+                作用：为元素绑定事件
+                语法：v-on:click="search" 简写 @click="search"
+ -->
+         <form class="search-form" action="search" method="post">
+            <label for="name">姓名</label>
+            <input type="text" id="name" name="name"    v-model="searchForm.name" placeholder="请输入员工姓名">
+            <label for="gender">性别</label>
+            <select id="gender" name="gender"   v-model="searchForm.gender">
+                <option value="">请选择</option>
+                <option value="1">男</option>
+                <option value="2">女</option>
+            </select>
+            <label for="position">职位</label>
+            <select id="position" name="position"   v-model="searchForm.job">
+                <option value="">请选择</option>
+                <option value="1">班主任</option>   
+                <option value="2">讲师</option>
+                <option value="3">学工主管</option>
+                <option value="4">教研主管</option>
+                <option value="5">咨询师</option>
+            </select>
+            <!-- v-on:click="search" 简写 @click="search" -->
+            <button type="button"   class="search"  v-on:click="search">查询</button>
+            <button type="button"    class="clear"   @click="clear">清空</button>
+        </form>
+        
+        <!-- 表格数据展示区域 -->
+        <table>
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>头像</th>
+                    <th>职位</th>
+                    <th>入职日期</th>
+                    <th>最后操作时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- v-for 指令
+                作用：循环遍历数组，渲染表格数据
+                语法:v-for="(item, index) in list" :key="item.id"
+                注意：想让哪个标签遍历展示多次，指令就加在哪个标签上 -->
+                <tr v-for="(e, index) in empList" :key="e.id">
+                    <td>{{index+1}}</td>
+                    <td>{{e.name}}</td>
+                    <td>{{e.gender == 1 ?"男":"女"}}</td>
+                    <!-- 插值表达式是不能出现在标签内部的 -->
+                     <!-- v-bind指令
+                     场景：动态为标签属性绑定值
+                     语法：v-bind:属性="变量"/:属性="变量"  -->
+                    <td><img class="avatar" v-bind:src="e.image"    :alt="e.name"></td>
+                    <!-- v-if:基于条件判断，来控制创建或移除元素节点（条件渲染）（不频繁切换的场景） -->
+                    <td>
+                        <span v-if="e.job == 1">班主任</span>
+                        <span v-else-if="e.job == 2">讲师</span>
+                        <span v-else-if="e.job == 3">学工主管</span>
+                        <span v-else-if="e.job == 4">教研主管</span>
+                        <span v-else-if="e.job == 5">咨询师</span>
+                        <span v-else>其他</span>
+                    </td>
+                    <!-- v-show:基于CSS样式dispaly来控制元素的显示与隐藏    （频繁切换的场景）  -->
+                    <!-- <td>
+                        <span v-show = "e.job == 1">班主任</span>
+                        <span v-show = "e.job == 2">讲师</span>
+                        <span v-show = "e.job == 3">学工主管</span>
+                        <span v-show = "e.job == 4">教研主管</span>
+                        <span v-show = "e.job == 5">咨询师</span>
+                    </td> -->
+                    <td>{{e.entrydate}}</td>
+                    <td>{{e.updatetime}}</td>
+                    <td class="action-buttons">
+                        <button class="edit">编辑</button>
+                        <button class="delete">删除</button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <!-- 底部版权区域 -->
+        <footer class="footer">
+            <p>江苏传智播客教育科技股份有限公司</p>
+            <p>版权所有 Copyright 2006-2024 All Rights Reserved</p>
+        </footer>
+    </div>
+    
+    <script type="module">
+        import  {createApp} from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js' 
+        createApp({
+            data(){
+                return{
+                    //定义数据模型，采集员工搜索表单数据
+                    searchForm:{    //封装用户输入的查询条件
+                        name:"",
+                        gender:"",
+                        job:""
+                    },
+                    empList:[
+                        {
+                            "id":1,
+                            "name":"令狐冲",
+                            "image":"https://tse2-mm.cn.bing.net/th/id/OIP-C.BQXPkfnd46-rZzljWmcPDgHaHa?rs=1&pid=ImgDetMain",
+                            "gender":1,
+                            "job":1,
+                            "entrydate":"2022-01-01",
+                            "updatetime":"2025-02-11"
+
+                        },
+                        {
+                            "id":2,
+                            "name":"岳灵珊",
+                            image:"https://ts1.cn.mm.bing.net/th/id/R-C.3b038183af60f34e3f86bac77a443cf3?rik=D1PWIEM10VdT1A&riu=http%3a%2f%2fn.sinaimg.cn%2fsinacn%2fw928h571%2f20180228%2f2102-fyrwsqk0213221.jpg&ehk=PxBgoLK1QonzivbonWWJVDcHHp3F0uZweZofQ%2fRtOe8%3d&risl=&pid=ImgRaw&r=0",
+                            "gender":2,
+                            "job":2,
+                            "entrydate":"2022-01-01",
+                            "updatetime":"2025-02-12"
+
+                        },
+                        {
+                            "id":3,
+                            "name":"任盈盈",
+                            image:"https://ts1.cn.mm.bing.net/th/id/R-C.01d4a291b4126219bd516b508e6aafff?rik=7NOdCXgBBU9RGA&riu=http%3a%2f%2fxa.wanmei.com%2fresources%2fjpg%2f170324%2f10071490323656184.jpg&ehk=IUBrbjF0dDB9GHDNGffQgwjG%2fUOPaKAUP7saDcOPa64%3d&risl=&pid=ImgRaw&r=0",
+                            "gender":2,
+                            "job":3,
+                            "entrydate":"2022-01-01",
+                            "updatetime":"2025-02-13"
+
+                        },
+                        {
+                            "id":4,
+                            "name":"岳不群",
+                            image:"https://tse1-mm.cn.bing.net/th/id/OIP-C.ivYmGknRVQYHibKiJcGP0wHaE4?rs=1&pid=ImgDetMain",
+                            "gender":1,
+                            "job":4,
+                            "entrydate":"2021-03-01",
+                            "updatetime":"2025-01-20"
+
+                        },
+                        {
+                            "id":5,
+                            "name":"宁中则",
+                            image:"https://n.sinaimg.cn/sinakd10121/468/w1162h906/20210504/e043-kppteas7383915.jpg",
+                            "gender":2,
+                            "job":5,
+                            "entrydate":"2021-04-15",
+                            "updatetime":"2025-02-15"
+
+                        },
+                        {
+                            "id":6,
+                            "name":"曲洋",
+                            image:"https://tse1-mm.cn.bing.net/th/id/OIP-C.fb3IiP7QeemD5ZhIFev2lAHaE7?rs=1&pid=ImgDetMain",
+                            "gender":1,
+                            "job":3,
+                            "entrydate":"2022-07-01",
+                            "updatetime":"2025-02-20"
+
+                        },
+                        {
+                            "id":8,
+                            "name":"莫大先生",
+                            image:"https://tse3-mm.cn.bing.net/th/id/OIP-C.MTQ8FeF4BggCt8dABK-I_QHaEy?rs=1&pid=ImgDetMain",
+                            "gender":1,
+                            "job":4,
+                            "entrydate":"2022-08-01",
+                            "updatetime":"2025-02-21"
+
+                        },
+                        {
+                            "id":9,
+                            "name":"仪琳",
+                            image:"https://ts1.cn.mm.bing.net/th/id/R-C.0b309afb07376ede35968d1bd41132d4?rik=RsHYvZK56kEGzg&riu=http%3a%2f%2fn.sinaimg.cn%2fsinacn10108%2f260%2fw640h420%2f20191116%2f49e1-iikmuti3242835.jpg&ehk=125WB3jlU7gK6EG%2bOvCEvxBwSm5%2b4ii%2fH1qBehbdByE%3d&risl=&pid=ImgRaw&r=0",
+                            "gender":2,
+                            "job":5,
+                            "entrydate":"2022-09-01",
+                            "updatetime":"2025-02-22"
+
+                        },
+                        {
+                            "id":10,
+                            "name":"左冷禅",
+                            image:"https://ts1.cn.mm.bing.net/th/id/R-C.6a8cbd3998ffec0dbca9c31c57e6feed?rik=%2fYXeYmfSSrFSGA&riu=http%3a%2f%2fn.sinaimg.cn%2ffront%2f320%2fw640h480%2f20181213%2fwK49-hqackac1297330.jpg&ehk=ePjOj9vWIIUSret5wwBXEsA%2fBCmEJxZItH1nvFLlKwc%3d&risl=&pid=ImgRaw&r=0",
+                            "gender":1,
+                            "job":1,
+                            "entrydate":"2022-10-01",
+                            "updatetime":"2025-02-23"
+
+                        },
+                        {
+                            "id":11,
+                            "name":"田伯光",
+                            image:"https://ts1.cn.mm.bing.net/th/id/R-C.d2706dccfacdeefab5a577c08ddcd023?rik=eKEbdl4PY1EqAg&pid=ImgRaw&r=0",
+                            "gender":1,
+                            "job":3,
+                            "entrydate":"2022-11-01",
+                            "updatetime":"2025-02-24"
+
+                        },
+                
+                    ]
+                }
+            },
+            //方法
+            methods:{
+                search(){
+                    //将搜索条件，输出到控制台
+                    console.log(this.searchForm)
+                },
+                clear(){
+                    //清空表单项数据
+                    this.searchFrom = {name:'',gender:'',job:''};
+                }
+            },
+        }).mount('#container');
+    </script>
+
+</body>
+</html>
+
